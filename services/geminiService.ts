@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import type { AnalysisResult } from '../types';
 
@@ -59,6 +58,40 @@ const buildPrompt = (jobRequirements: string) => {
     6.  **aiResourceSuggestions**: Sugiere 2-3 herramientas o soluciones de IA, relevantes para el rol o sector, que podrían mejorar la eficiencia del equipo.
     7.  **No uses edad, género u otros datos no laborales en tu evaluación.**
     `;
+};
+
+const generateRequirementsPrompt = (jobTitle: string) => {
+    return `Actúa como un reclutador de TI senior y experto en redacción de ofertas de empleo. Tu tarea es generar una descripción completa y atractiva para el puesto de "${jobTitle}".
+
+La descripción debe estar en español y formateada de manera clara y profesional, lista para ser utilizada en una publicación de empleo.
+
+Incluye las siguientes secciones bien definidas:
+
+1.  **Resumen del Puesto:** Una breve introducción al rol y su impacto en la empresa.
+2.  **Responsabilidades Clave:** Una lista con viñetas de las tareas y deberes principales.
+3.  **Requisitos y Habilidades Técnicas:** Una lista con viñetas de las tecnologías, lenguajes de programación, herramientas y plataformas indispensables y deseables. Sé específico.
+4.  **Habilidades Blandas:** Una lista con viñetas de las competencias interpersonales cruciales para el éxito en el rol (ej. comunicación, trabajo en equipo, resolución de problemas).
+5.  **Calificaciones y Experiencia:** Nivel educativo, certificaciones y años de experiencia requeridos.
+
+Asegúrate de que el tono sea profesional pero también atractivo para los candidatos potenciales. El resultado debe ser únicamente el texto de la descripción del puesto, sin introducciones ni comentarios adicionales.`;
+};
+
+export const generateJobRequirements = async (jobTitle: string): Promise<string> => {
+     if (!process.env.API_KEY) {
+        throw new Error("API key for Gemini is not configured.");
+    }
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: generateRequirementsPrompt(jobTitle),
+        });
+        return response.text;
+    } catch (e) {
+        console.error("Error calling Gemini API for job requirements:", e);
+        throw new Error("No se pudo generar la descripción del puesto. Revisa la consola para más detalles.");
+    }
 };
 
 
