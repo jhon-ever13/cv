@@ -1,0 +1,5 @@
+{
+  "name": "Asistente de CV con IA",
+  "description": "Una aplicación que utiliza IA para analizar currículums, compararlos con los requisitos del puesto y generar resúmenes profesionales, análisis de ajuste y recomendaciones de capacitación.",
+  "requestFramePermissions": []
+}
